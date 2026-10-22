@@ -1,0 +1,12 @@
+[project]
+name = "claude-minute-cryptic-evaluation"
+version = "0.1.0"
+description = "Can Claude Opus 5.5 solve Minute Cryptic clues published after its training cutoff, with no internet?"
+requires-python = ">=3.11"
+dependencies = [
+    "beautifulsoup4",
+    "pandas",
+    "requests",
+    "tabulate",
+    "tqdm",
+]
