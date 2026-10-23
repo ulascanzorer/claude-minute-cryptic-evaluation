@@ -8,6 +8,7 @@ from bs4 import BeautifulSoup
 
 ARCHIVE_URL = "https://www.linkedinpinpointanswer.today/minute-cryptic-answer-today/archive"
 CUTOFF = date(2026, 7, 1)  # Opus 5.5 training cutoff is June 2026
+END = date(2026, 10, 22)  # fixed so reruns fetch the same set
 OUT = Path("data/puzzles.jsonl")
 
 
@@ -36,9 +37,9 @@ def main():
     page = 1
     while True:
         rows = fetch_page(page)
-        new = [p for p in rows if date.fromisoformat(p["date"]) >= CUTOFF]
-        puzzles.update({p["date"]: p for p in new})
-        if not rows or len(new) < len(rows):
+        dates = [date.fromisoformat(p["date"]) for p in rows]
+        puzzles.update({p["date"]: p for p, d in zip(rows, dates) if CUTOFF <= d <= END})
+        if not rows or min(dates) < CUTOFF:
             break
         page += 1
         time.sleep(1)
