@@ -9,7 +9,36 @@ It runs entirely through [Claude Code](https://claude.com/claude-code) in headle
 
 ## Results
 
-_Coming soon._
+**Claude Opus 5.5 solved 97 of 111 clues (87.4%)** published between 2026-07-01 and 2026-10-22. That's one attempt per clue at `--effort high`. Three days are missing because the source archive skips them.
+
+A typical clue took about 5 seconds. Every wrong answer still had the right letter count.
+
+### It usually knows when it's wrong
+
+The prompt asks Claude to explain its parse before answering. A simple keyword check for hedges ("uncertain", "best guess", "couldn't parse", ...) gives this:
+
+| | Hedged | Confident |
+|---|---|---|
+| Correct (97) | 5 | 92 |
+| Wrong (14) | 13 | 1 |
+
+Thirteen of the fourteen misses came with an explicit warning that the wordplay didn't fully work.
+
+### Interesting misses
+
+**Got the letters, lost the answer.**
+*After golf, he picked up ball and tee, then left? (5)*. The answer is HOTEL: it comes after Golf in the NATO alphabet, and HE takes in O (ball) and T (tee), then adds L (left). Claude built H(OT)E correctly, then dropped the L, decided the parse "gives HOTE, not HOST", and answered GHOST.
+
+**Didn't play Wordle.**
+*Is extremely close to Wordle solve: 🟨🟩🟨🟨🟨 (5)*. The answer is LOVES: the letters of SOLVE with the O green (same spot) and the other four yellow (moved). Claude never tried the letters of "solve". It took the definition as ABUTS and noted that no Wordle pattern fit.
+
+**The one confident miss.**
+*Cat on a leash locked up without a key (6)*. ATONAL is hidden in "c**at on a l**eash" ("locked up" signals the hidden word), and "without a key" is the definition. Claude answered LASHED with a neat but invented parse ("on a leash" gives LEASHED, minus the key E) and no hedge at all.
+
+**Missed a simple anagram.**
+*It's ok to miscalculate three times two? (5,5)*. The answer is THERE THERE: THREE scrambled, twice. Claude spent two minutes on it and gave up with ABOUT RIGHT.
+
+Most misses share a pattern. Claude settles on the wrong definition early, or misses that the clue leans on outside context (NATO letters, Wordle colours), and then tries to force the wordplay to fit. A wrong letter-level step is rarer (HOTEL is the clearest case).
 
 ## How it works
 
@@ -31,7 +60,7 @@ Each clue runs as a fresh `claude -p` call in an empty temp directory with:
 | `--disable-slash-commands` | no skills or commands |
 | `--system-prompt` | replaces Claude Code's agentic prompt with the rules |
 
-`solve.py` doesn't just trust the flags. It reads Claude Code's `init` event and fails if any tool or MCP server is available, or if Claude ever tries a tool call. The full transcript of every attempt is kept in `results/raw/`.
+`solve.py` doesn't just trust the flags. It reads Claude Code's `init` event and fails if any tool or MCP server is available, or if Claude ever tries a tool call. The full transcript of every attempt is kept in `results/<effort>/raw/`.
 
 ## Reproduce
 
