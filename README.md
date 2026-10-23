@@ -15,16 +15,14 @@ A typical clue took about 5 seconds. Every wrong answer still had the right lett
 
 ### It usually knows when it's wrong
 
-The prompt asks Claude to explain its parse before answering. A simple keyword check for hedges ("uncertain", "best guess", "couldn't parse", ...) gives this:
+The prompt asks Claude to explain its parse before answering. A simple keyword check for hesitation ("uncertain", "best guess", "couldn't parse", ...) gives this:
 
-| | Hedged | Confident |
+| | Hesitated | Confident |
 |---|---|---|
 | Correct (97) | 5 | 92 |
 | Wrong (14) | 13 | 1 |
 
-Thirteen of the fourteen misses came with an explicit warning that the wordplay didn't fully work.
-
-### Interesting misses
+### Some interesting misses
 
 **Got the letters, lost the answer.**
 *After golf, he picked up ball and tee, then left? (5)*. The answer is HOTEL: it comes after Golf in the NATO alphabet, and HE takes in O (ball) and T (tee), then adds L (left). Claude built H(OT)E correctly, then dropped the L, decided the parse "gives HOTE, not HOST", and answered GHOST.
@@ -32,13 +30,11 @@ Thirteen of the fourteen misses came with an explicit warning that the wordplay 
 **Didn't play Wordle.**
 *Is extremely close to Wordle solve: 🟨🟩🟨🟨🟨 (5)*. The answer is LOVES: the letters of SOLVE with the O green (same spot) and the other four yellow (moved). Claude never tried the letters of "solve". It took the definition as ABUTS and noted that no Wordle pattern fit.
 
-**The one confident miss.**
+**A confident miss.**
 *Cat on a leash locked up without a key (6)*. ATONAL is hidden in "c**at on a l**eash" ("locked up" signals the hidden word), and "without a key" is the definition. Claude answered LASHED with a neat but invented parse ("on a leash" gives LEASHED, minus the key E) and no hedge at all.
 
 **Missed a simple anagram.**
 *It's ok to miscalculate three times two? (5,5)*. The answer is THERE THERE: THREE scrambled, twice. Claude spent two minutes on it and gave up with ABOUT RIGHT.
-
-Most misses share a pattern. Claude settles on the wrong definition early, or misses that the clue leans on outside context (NATO letters, Wordle colours), and then tries to force the wordplay to fit. A wrong letter-level step is rarer (HOTEL is the clearest case).
 
 ## How it works
 
